@@ -7,10 +7,14 @@
  * @module markdown-gfm/commonmarkdataprocessor
  */
 
+/* eslint-env browser */
+
 import commonMark from 'commonmark';
 import Renderer from './renderer/renderer';
-import ViewRange from '@ckeditor/ckeditor5-engine/src/view/range';
-import TreeWalker from '@ckeditor/ckeditor5-engine/src/view/treewalker';
+import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/htmldataprocessor';
+import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
+import { gfm } from 'turndown-plugin-gfm';
+import TurndownService from 'turndown';
 
 /**
  * This data processor implementation uses CommonMark as input/output data.
@@ -18,6 +22,11 @@ import TreeWalker from '@ckeditor/ckeditor5-engine/src/view/treewalker';
  * @implements module:engine/dataprocessor/dataprocessor~DataProcessor
  */
 export default class CommonMarkDataProcessor {
+	constructor() {
+		this._htmlDP = new HtmlDataProcessor();
+		this._domConverter = new DomConverter();
+	}
+
 	/**
 	 * Converts the provided CommonMark string to view tree.
 	 *
@@ -39,77 +48,14 @@ export default class CommonMarkDataProcessor {
 	 * @param {module:engine/view/documentfragment~DocumentFragment} viewFragment
 	 * @returns {String} CommonMark string.
 	 */
-	toData( documentFragment ) {
-		let output = '';
-		const walker = new TreeWalker( { boundaries: ViewRange.createIn( documentFragment ) } );
+	toData( viewFragment ) {
+		// Convert view DocumentFragment to DOM DocumentFragment.
+		const domFragment = this._domConverter.viewToDom( viewFragment, document );
 
-		for ( const entry of walker ) {
-			const node = entry.item;
-			const type = entry.type;
-
-			// console.log( node, type );
-
-			if ( type === 'elementStart' ) {
-				// Check if inside figcaption.
-				if ( node.is( 'element', 'img' ) ) {
-					const src = node.getAttribute( 'src' );
-					const alt = node.getAttribute( 'alt' ) || '';
-
-					output += `![${ alt }](${ src })\n\n`;
-				}
-
-				if ( node.is( 'element', 'a' ) ) {
-					output += '[';
-				}
-
-				if ( node.is( 'element', 'strong' ) ) {
-					output += '**';
-				}
-
-				if ( node.is( 'element', 'i' ) ) {
-					output += '*';
-				}
-
-				// Headings.
-				if ( /h[1-6]/.test( node.name ) ) {
-					// TODO: use regexp group.
-					const level = parseInt( node.name[ 1 ] );
-
-					output += '#'.repeat( level ) + ' ';
-				}
-			}
-
-			if ( type === 'elementEnd' ) {
-				if ( node.is( 'element', 'p' ) ) {
-					output += '\n\n';
-				}
-
-				if ( node.is( 'element', 'strong' ) ) {
-					output += '**';
-				}
-
-				if ( node.is( 'element', 'i' ) ) {
-					output += '*';
-				}
-
-				if ( node.is( 'element', 'a' ) ) {
-					const href = node.getAttribute( 'href' ) || '';
-
-					output += `](${ href })`;
-				}
-
-				// Headings.
-				if ( /h[1-6]/.test( node.name ) ) {
-					output += '\n\n';
-				}
-			}
-
-			if ( type === 'text' ) {
-				output += node.data;
-			}
-		}
-
-		return output.trim();
+		// Use Turndown to convert DOM fragment to markdown
+		const turndownService = new TurndownService( { headingStyle: 'atx' } );
+		turndownService.use( gfm );
+		return turndownService.turndown( domFragment );
 	}
 }
 
