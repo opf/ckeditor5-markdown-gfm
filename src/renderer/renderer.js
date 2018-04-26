@@ -30,7 +30,7 @@ export default class Renderer {
 					const newNode = handler( node, event, walker );
 
 					if ( currentParent ) {
-						currentParent.appendChildren( newNode );
+						currentParent._appendChild( newNode );
 					}
 
 					if ( node.isContainer ) {

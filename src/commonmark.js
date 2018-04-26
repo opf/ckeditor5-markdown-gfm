@@ -3,17 +3,11 @@
  * For licensing, see LICENSE.md.
  */
 
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import CommonMarkDataProcessor from './commonmarkdataprocessor';
 
 // Simple plugin which loads the data processor.
 // eslint-disable-next-line no-unused-vars
-function EnableDataProcessor( editor ) {
+export default function CommonMarkPlugin( editor ) {
 	editor.data.processor = new CommonMarkDataProcessor();
 }
 
-export default class CommonMark extends Plugin {
-	static get requires() {
-		return [];
-	}
-}
