@@ -9,12 +9,11 @@
 
 /* eslint-env browser */
 
-import commonMark from 'commonmark';
-import Renderer from './renderer/renderer';
 import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/htmldataprocessor';
 import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
 import { gfm } from 'turndown-plugin-gfm';
 import TurndownService from 'turndown';
+import MarkdownIt from 'markdown-it';
 
 /**
  * This data processor implementation uses CommonMark as input/output data.
@@ -34,11 +33,10 @@ export default class CommonMarkDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		const parser = new commonMark.Parser();
-		const ast = parser.parse( data );
-		const renderer = new Renderer();
+		const md = new MarkdownIt();
 
-		return renderer.render( ast );
+		const html = md.render( data );
+		return this._htmlDP.toView( html );
 	}
 
 	/**
