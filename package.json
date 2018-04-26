@@ -1,24 +1,14 @@
 {
   "name": "@ckeditor/ckeditor5-markdown-gfm",
-  "version": "1.0.0-alpha.2",
+  "version": "v10.0.0",
   "description": "GitHub Flavored Markdown data processor for CKEditor 5.",
   "keywords": [
     "ckeditor5",
     "ckeditor5-feature"
   ],
   "dependencies": {
-    "@ckeditor/ckeditor5-basic-styles": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-engine": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-clipboard": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-autoformat": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-core": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-enter": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-heading": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-image": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-paragraph": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-typing": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-undo": "^1.0.0-alpha.2",
-    "@ckeditor/ckeditor5-link": "^1.0.0-alpha.2",
+    "@ckeditor/ckeditor5-engine": " v10.0.0",
+    "@ckeditor/ckeditor5-core": " v10.0.0",
     "turndown": "^4.0.1",
     "turndown-plugin-gfm": "^1.0.1"
   },
