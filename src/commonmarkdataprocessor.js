@@ -9,12 +9,12 @@
 
 /* eslint-env browser */
 
-import commonMark from 'commonmark';
-import Renderer from './renderer/renderer';
 import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/htmldataprocessor';
 import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
 import { gfm } from 'turndown-plugin-gfm';
 import TurndownService from 'turndown';
+import marked from './lib/marked/marked';
+import GFMRenderer from './lib/marked/renderer';
 
 /**
  * This data processor implementation uses CommonMark as input/output data.
@@ -34,11 +34,15 @@ export default class CommonMarkDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		const parser = new commonMark.Parser();
-		const ast = parser.parse( data );
-		const renderer = new Renderer();
+		const html = marked.parse( data, {
+			gfm: true,
+			breaks: true,
+			tables: true,
+			xhtml: true,
+			renderer: new GFMRenderer()
+		} );
 
-		return renderer.render( ast );
+		return this._htmlDP.toView( html );
 	}
 
 	/**
@@ -55,7 +59,10 @@ export default class CommonMarkDataProcessor {
 		// Use Turndown to convert DOM fragment to markdown
 		const turndownService = new TurndownService( { headingStyle: 'atx' } );
 		turndownService.use( gfm );
-		return turndownService.turndown( domFragment );
+		turndownService.keep( [ 'macro' ] );
+
+		return turndownService.turndown( domFragment )
+			.replace( /(<macro .+?>).+?(<\/macro>)/g, '$1$2' );
 	}
 }
 
