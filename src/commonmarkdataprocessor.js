@@ -33,9 +33,10 @@ export default class CommonMarkDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		const md = new MarkdownIt();
+		const md = new MarkdownIt( { html: true } );
 
 		const html = md.render( data );
+
 		return this._htmlDP.toView( html );
 	}
 
@@ -52,6 +53,7 @@ export default class CommonMarkDataProcessor {
 
 		// Use Turndown to convert DOM fragment to markdown
 		const turndownService = new TurndownService( { headingStyle: 'atx' } );
+
 		turndownService.use( gfm );
 		return turndownService.turndown( domFragment );
 	}
