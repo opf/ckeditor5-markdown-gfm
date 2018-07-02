@@ -17,7 +17,6 @@
     "@ckeditor/ckeditor5-easy-image": "^1.0.0-alpha.2",
     "eslint": "^4.15.0",
     "eslint-config-ckeditor5": "^1.0.7",
-    "husky": "^0.14.3",
     "lint-staged": "^6.0.0"
   },
   "engines": {
@@ -38,13 +37,7 @@
     "theme"
   ],
   "scripts": {
-    "lint": "eslint --quiet '**/*.js'",
-    "precommit": "lint-staged"
-  },
-  "lint-staged": {
-    "**/*.js": [
-      "eslint --quiet"
-    ]
+    "lint": "eslint --quiet '**/*.js'"
   },
   "eslintIgnore": [
     "src/lib/**",

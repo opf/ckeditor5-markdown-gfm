@@ -61,8 +61,15 @@ export default class CommonMarkDataProcessor {
 		turndownService.use( gfm );
 		turndownService.keep( [ 'macro' ] );
 
-		return turndownService.turndown( domFragment )
-			.replace( /(<macro .+?>).+?(<\/macro>)/g, '$1$2' );
+		turndownService.addRule('strikethrough', {
+			filter: ['macro'],
+			replacement: function (content, node) {
+				node.innerHTML = '';
+				return node.outerHTML;
+			}
+		  })
+
+		return turndownService.turndown( domFragment );
 	}
 }
 
