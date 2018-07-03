@@ -59,10 +59,15 @@ export default class CommonMarkDataProcessor {
 		// Use Turndown to convert DOM fragment to markdown
 		const turndownService = new TurndownService( { headingStyle: 'atx' } );
 		turndownService.use( gfm );
-		turndownService.keep( [ 'macro' ] );
 
-		return turndownService.turndown( domFragment )
-			.replace( /(<macro .+?>).+?(<\/macro>)/g, '$1$2' );
+		turndownService.addRule('openProjectMacros', {
+			filter: ['macro'],
+			replacement: function (content, node) {
+				node.innerHTML = '';
+				return node.outerHTML;
+			}
+		  })
+
+		return turndownService.turndown( domFragment );
 	}
 }
-
