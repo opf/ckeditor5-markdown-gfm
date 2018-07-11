@@ -13,8 +13,6 @@ import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/html
 import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
 import { gfm } from 'turndown-plugin-gfm';
 import TurndownService from 'turndown';
-import marked from './lib/marked/marked';
-import GFMRenderer from './lib/marked/renderer';
 
 /**
  * This data processor implementation uses CommonMark as input/output data.
@@ -34,13 +32,13 @@ export default class CommonMarkDataProcessor {
 	 * @returns {module:engine/view/documentfragment~DocumentFragment} The converted view element.
 	 */
 	toView( data ) {
-		const html = marked.parse( data, {
-			gfm: true,
-			breaks: true,
-			tables: true,
-			xhtml: true,
-			renderer: new GFMRenderer()
+		const md = require( 'markdown-it' )( {
+			// Output html
+			html: true,
+			// Use GFM language fence prefix
+			langPrefix: 'language-',
 		} );
+		const html = md.render( data );
 
 		return this._htmlDP.toView( html );
 	}
@@ -69,7 +67,7 @@ export default class CommonMarkDataProcessor {
 				node.innerHTML = '';
 				return node.outerHTML;
 			}
-		} );
+		});
 
 		return turndownService.turndown( domFragment );
 	}
