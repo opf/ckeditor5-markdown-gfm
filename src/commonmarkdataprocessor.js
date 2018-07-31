@@ -11,7 +11,7 @@
 
 import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/htmldataprocessor';
 import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
-import { gfm } from 'turndown-plugin-gfm';
+import {highlightedCodeBlock, strikethrough, taskListItems} from 'turndown-plugin-gfm';
 import TurndownService from 'turndown';
 
 /**
@@ -59,7 +59,17 @@ export default class CommonMarkDataProcessor {
 			headingStyle: 'atx',
 			codeBlockStyle: 'fenced'
 		} );
-		turndownService.use( gfm );
+
+		turndownService.use([
+			highlightedCodeBlock,
+			strikethrough,
+			taskListItems,
+		]);
+
+		// Keep HTML tables
+		turndownService.keep(function (node) {
+			return node.nodeName === 'TABLE';
+		});
 
 		turndownService.addRule( 'openProjectMacros', {
 			filter: [ 'macro' ],
