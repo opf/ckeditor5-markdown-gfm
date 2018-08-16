@@ -66,14 +66,21 @@ export default class CommonMarkDataProcessor {
 			taskListItems,
 		]);
 
-		// Keep HTML tables
-		turndownService.keep(function (node) {
-			return node.nodeName === 'TABLE';
+		// Keep HTML tables and remove filler elements
+		turndownService.addRule('htmlTables', {
+			filter: ['table'],
+			replacement: function (_content, node) {
+				// Remove filler nodes
+				node.querySelectorAll('td br[data-cke-filler]')
+					.forEach((node) => node.remove());
+
+				return node.outerHTML;
+			}
 		});
 
 		turndownService.addRule( 'openProjectMacros', {
 			filter: [ 'macro' ],
-			replacement: ( content, node ) => {
+			replacement: ( _content, node ) => {
 				node.innerHTML = '';
 				return node.outerHTML;
 			}
