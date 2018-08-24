@@ -13,6 +13,7 @@ import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/html
 import DomConverter from '@ckeditor/ckeditor5-engine/src/view/domconverter';
 import {highlightedCodeBlock, strikethrough, taskListItems} from 'turndown-plugin-gfm';
 import TurndownService from 'turndown';
+import {replaceWhitespaceWithin} from './whitespace';
 
 /**
  * This data processor implementation uses CommonMark as input/output data.
@@ -53,6 +54,10 @@ export default class CommonMarkDataProcessor {
 	toData( viewFragment ) {
 		// Convert view DocumentFragment to DOM DocumentFragment.
 		const domFragment = this._domConverter.viewToDom( viewFragment, document );
+
+		// Replace leading and trailing nbsp at the end of strong and em tags
+		// with single spaces
+		replaceWhitespaceWithin(domFragment, ['strong', 'em']);
 
 		// Use Turndown to convert DOM fragment to markdown
 		const turndownService = new TurndownService( {
